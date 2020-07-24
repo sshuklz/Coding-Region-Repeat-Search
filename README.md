@@ -34,6 +34,78 @@ CSV file that contains two columns: gene name and accompanying Ensemble ID (mult
 
 ## Calculations and positioning consideration (in progress)
 
+        DomainLen = 0
+        ResNum = 0
+        GapNum = 0
+        
+        for CodonPos in range (round(len(row[2])/3)):
+            DomainLen += GapLength
+            RepLen += GapLength
+            if row[2][DomainLen-3:DomainLen] in Reps : # repeat residues
+                ResNum += 1
+                GapNum = 0
+
+            else:
+                GapNum += GapLength
+
+                if GapNum >= Gap_allowance*GapLength:
+
+                    if ResNum >= Size: 
+                        
+                        Gene_ref = row[0] + ': ' + row[1]; Up_down_stream_adj = 0
+                        Coord = [((CodonPos*GapLength) - RepLen + 3),(CodonPos*GapLength)+(GapLength*2) - GapNum - 3]
+                        
+                        with closing(requests.get(RefTable, stream=True)) as r:
+                            reader = csv.reader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',') 
+                            for ref in reader:
+                               
+                                if ref[1] == row[1]:
+                                    stop = 0; Rep_ST = 0; Rep_ED = 0
+                                    
+                                    if int(ref[8]) == 1:
+                                            
+                                        if Coord[0] > int(ref[7]) or Coord[1] < int(ref[6]):
+                                            stop = 1; Up_down_stream_adj = 0
+                                        
+                                        Rep_ST = int(ref[3])
+                                        Rep_ED = int(ref[4]) 
+                                        
+                                        if Coord[0] > int(ref[6]):
+                                            Rep_ST = int(ref[3]) + (Coord[0] - int(ref[6])) - 1
+                                            
+                                        if Coord[1] < int(ref[7]):
+                                            Rep_ED = int(ref[4]) - (int(ref[7]) - Coord[1]) - 1 + Up_down_stream_adj
+                                               
+                                    if int(ref[8]) == -1:
+                                            
+                                        if Coord[0] > int(ref[7]) or Coord[1] < int(ref[6]):
+                                            stop = 1; Up_down_stream_adj = 0
+                                            
+                                        Rep_ST = int(ref[3])
+                                        Rep_ED = int(ref[4])
+                                        
+                                        if Coord[0] > int(ref[6]):
+                                            Rep_ED = int(ref[4]) - (Coord[0] - int(ref[6]))
+                                            
+                                        if Coord[1] < int(ref[7]):
+                                            Rep_ST = int(ref[3]) + (int(ref[7]) - Coord[1]) - Up_down_stream_adj
+                                    
+                                    Elen = int(ref[4]) - int(ref[3]); Rlen = Rep_ED - Rep_ST;
+                                    
+                                    if stop != 1:       
+                                        Gene_dict = Gene_dict.append({'Gene': ref[0],'Transcript': ref[1],'CHR': ref[2],'Exon_num':ref[5],'Exon_ST': int(ref[3]),'Exon_ED': int(ref[4]),'Rep_ST': Rep_ST,'Rep_ED': Rep_ED,'Coding_LEN': len(row[2]),'Exon_LEN': Elen,'Rep_LEN': Rlen,'Sense': ref[8]}, ignore_index=True)
+                                        Up_down_stream_adj = 1
+                                    else:
+                                        Up_down_stream_adj = 0
+                                    
+                        DNAseq = row[2][(CodonPos*GapLength)-RepLen:(CodonPos*GapLength)+(GapLength*2) - GapNum]
+                        AAseq = Seq(DNAseq, generic_dna).translate()
+                        
+                        if row[0] not in Gene_list or Gene_ref in Gene_ref_list:
+                            if row[0] not in Gene_list:
+                                Gene_list = Gene_list + [row[0]]
+
+
 ## Project updates:
 
 Jul 24 
