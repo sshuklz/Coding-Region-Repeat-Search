@@ -114,4 +114,4 @@ Possible options include: upgrading to Colloab pro for $10 a month subscription 
 and cut out the fluff. Perform calculations offline and move away from google collab. 
 - wrote code in HTML to decipher JSON objects produced by ICGC API
 - Rewrote / organized code in accordance to PEP 8 style guide (https://www.python.org/dev/peps/pep-0008/), so code is understandable by a large audience
-- Updates from meeting (in progress)
+- Updates from meeting: Try to minimize data size by removing enseble ID. Wait for subscription to get approved and also recieve ideal model table. Work on searching for intronic regions as opposed to exonic regions (will have to create new dataset and reorganize code slightly). READ literature.
