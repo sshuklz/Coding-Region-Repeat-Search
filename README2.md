@@ -27,9 +27,7 @@ functional binding domain. For higly variable domains a lower value might be rec
 
 * G_LINKER_LENGTH is a global variable only required for binding_models (see below). A G_LINKER_LENGTH = 4, is equivalent to -G-G-G-G-.
 
-<img src="markdownmonstericon.png"
-     alt="Markdown Monster icon"
-     style="float: left; margin-right: 10px;" />
+![Image of Yaktocat](https://www.clipartmax.com/png/small/332-3326933_hi-speech-bubble-png-clipart-computer-icons-clip-art-hi-speech-bubble.png)
 
 ```
 BINDING_DOMAIN_REF = [
